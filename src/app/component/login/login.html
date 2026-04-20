@@ -1,0 +1,17 @@
+<div class="login-container" style="margin: 50px; text-align: center;">
+  <h2>Login Into ShopAPP</h2>
+  
+  <form #loginForm="ngForm" (ngSubmit)="onLogin()">
+    <div style="margin-bottom: 10px;">
+      <input type="email" name="email" placeholder="Email" 
+             [(ngModel)]="loginData.email" required>
+    </div>
+    
+    <div style="margin-bottom: 10px;">
+      <input type="password" name="password" placeholder="Password" 
+             [(ngModel)]="loginData.password" required>
+    </div>
+    
+    <button type="submit" [disabled]="!loginForm.valid">Login</button>
+  </form>
+</div>
