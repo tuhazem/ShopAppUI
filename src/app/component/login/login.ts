@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LoginModel } from '../../models/user.model';
 import { Account } from '../../services/account';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -17,13 +18,13 @@ export class Login {
     password: ''
   }
 
-  constructor(private account: Account){}
+  constructor(private account: Account , private router: Router){}
 
   onLogin(){
     this.account.login(this.loginData).subscribe({
       next: (response) => {
         console.log(response);
-        alert( "Login Successful: " + response.username);
+        this.router.navigate(['/home']);
       },
       error: (error) => {
         console.log(error);
