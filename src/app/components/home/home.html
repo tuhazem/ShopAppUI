@@ -36,8 +36,9 @@
                 <span class="badge bg-secondary">{{ item.categoryName }}</span>
               </td>
               <td class="text-center">
-                <button class="btn btn-outline-primary btn-sm me-1">Edit</button>
-                <button class="btn btn-outline-danger btn-sm">Delete</button>
+                <button class="btn btn-outline-primary btn-sm me-1" data-bs-toggle="modal" data-bs-target="#addModal" 
+                (click)="onEdit(item)">Edit</button>
+                <button class="btn btn-outline-danger btn-sm" (click)="onDelete(item.id)" >Delete</button>
               </td>
             </tr>
             
@@ -71,7 +72,7 @@
 
 
 
-<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">
+<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal" (click)="prepareAdd()">
   + Add Product
 </button>
 

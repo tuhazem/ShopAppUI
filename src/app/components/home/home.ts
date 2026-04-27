@@ -15,16 +15,20 @@ declare var bootstrap: any;
 export class Home implements OnInit {
 
   categories: any[] = [];
-  newproduct: CreateProductModel = {
+  newproduct: any = {
+    id:0,
     name: '',
     price: 0,
     description: '',
     categoryId: 0 
   };
+
   
   products: ProductModel[] = [];
   pageNumber: number = 1;
   pageSize: number = 10;
+
+    isEditMode:boolean = false
 
   constructor(private productService: ProductService) { }
   
@@ -64,13 +68,30 @@ export class Home implements OnInit {
     });
   }
 
+  prepareAdd() {
+    this.isEditMode = false; // قلبنا الحالة لإضافة
+    this.newproduct = {id:0 , name: '', price: 0, description: '', categoryId: 0 }; // Reset form
+  }
+
   saveProduct() {
+    console.log("Current Mode:", this.isEditMode);
+    console.log("Product to Save:", this.newproduct);
+    if(this.isEditMode){
+    this.productService.UpdateProduct(this.newproduct.id , this.newproduct).subscribe({
+      next :()=>{
+        alert("Upate Done")
+        this.loadProducts()
+        this.newproduct = {id:0 , name: '', price: 0, description: '', categoryId: 0 }; // Reset form
+
+      }
+    });
+    }else {
     this.productService.AddProduct(this.newproduct).subscribe({
 
       next: (response) => {
         alert("Product added successfully!");
         this.loadProducts(); // Refresh the product list after adding
-        this.newproduct = { name: '', price: 0, description: '', categoryId: 0 }; // Reset form
+        this.newproduct = {id:0 , name: '', price: 0, description: '', categoryId: 0 }; // Reset form
       },
       error: (error) => {
         console.error('Error adding product:', error);
@@ -78,10 +99,7 @@ export class Home implements OnInit {
       }
 
     });
-  }
-
-
-
+  }}
 
 openModal() {
   const element = document.getElementById('addModal');
@@ -90,5 +108,28 @@ openModal() {
     myModal.show();
   }
 }
+
+  onDelete(id: number){
+    if(confirm("Are You Sure To Delete This Item ?")){
+      this.productService.DeleteProduct(id).subscribe({
+        next: ()=>{
+          alert("Deleted Succ");
+          this.loadProducts()
+        },
+        error:(error)=>{
+          console.error(error)
+          alert("Cant Delete This Product");
+        }
+      })
+    }
+  }
+
+  onEdit(item:any){
+    this.isEditMode = true;
+    this.newproduct = {...item}
+  }
+
+
+
 
 }
