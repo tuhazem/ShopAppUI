@@ -13,6 +13,7 @@ export interface CreateProductModel{
     description:string;
     price:number;
     categoryId:number;
+    stock:number;
 
 }
 

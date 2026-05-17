@@ -124,6 +124,14 @@
             <div class="invalid-feedback">Category is required</div>
           </div>
 
+          <div class="mb-3">
+            <label class="form-label">Stock</label>
+            <input type="number" name="stock" class="form-control" 
+                   [(ngModel)]="newproduct.stock" required min="1" #priceVal="ngModel"
+                   [class.is-invalid]="priceVal.invalid && priceVal.touched">
+            <div class="invalid-feedback">Stock must be a positive number</div>
+          </div>
+
         </div>
 
         <div class="modal-footer">

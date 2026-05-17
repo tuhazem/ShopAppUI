@@ -1,14 +1,37 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
   <div class="container">
-    <a class="navbar-brand" href="#">Shop App</a>
-    <div class="collapse navbar-collapse">
+    <a class="navbar-brand" routerLink="/">Shop App</a>
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/home">Main</a>
+          <a class="nav-link" routerLinkActive="active" routerLink="/home">Main</a>
         </li>
-        </ul>
-      <div class="d-flex">
-        <button class="btn btn-outline-light btn-sm" (click)="onLogout()">Logout</button>
+
+        <!-- مش هيظهر غير للـ Admin بس -->
+        <li class="nav-item" *ngIf="accountService.isAdmin()">
+          <a class="nav-link text-warning fw-bold" routerLinkActive="active" routerLink="/dashboard">
+            <i class="bi bi-speedometer2"></i> Dashboard
+          </a>
+        </li>
+      </ul>
+
+      <div class="d-flex align-items-center">
+        <!-- لو اليوزر مش عامل Login -->
+        <ng-container *ngIf="!accountService.isLoggedIn()">
+          <a class="btn btn-outline-light btn-sm me-2" routerLink="/login">Login</a>
+          <a class="btn btn-primary btn-sm" routerLink="/register">Register</a>
+        </ng-container>
+
+        <!-- لو اليوزر عامل Login يظهر زرار الـ Logout -->
+        <ng-container *ngIf="accountService.isLoggedIn()">
+          <span class="text-light me-3 small">Welcome back!</span>
+          <button class="btn btn-outline-danger btn-sm" (click)="onLogout()">Logout</button>
+        </ng-container>
       </div>
     </div>
   </div>

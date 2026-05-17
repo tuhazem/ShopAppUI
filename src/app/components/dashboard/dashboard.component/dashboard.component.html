@@ -1,0 +1,51 @@
+<p>dashboard.component works!</p>
+<!-- dashboard.component.html -->
+<div class="container mt-4">
+  <div class="row">
+    <!-- Total Sales Card -->
+    <div class="col-md-4">
+      <div class="card text-white bg-primary mb-3">
+        <div class="card-body text-center">
+          <h5 class="card-title">Today </h5>
+          <h2>{{ stats?.totalSalesToday | currency:'EGP' }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- Count Card-->
+    <div class="col-md-4">
+      <div class="card text-white bg-success mb-3">
+        <div class="card-body text-center">
+          <h5 class="card-title">Number of Receipts</h5>
+          <h2>{{ stats?.totalOrdersToday }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-5">
+    <!-- Most Ordered Product Chart -->
+    <div class="col-md-6">
+      <div class="card p-3 shadow">
+        <h4 class="text-center">Most Ordered Product</h4>
+        <canvas baseChart
+          [data]="barChartData"
+          [options]="barChartOptions"
+          [type]="barChartType">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Low Stock Products Chart -->
+    <div class="col-md-6">
+      <div class="card p-3 shadow">
+        <h4 class="text-center">Low Stock Products</h4>
+        <canvas baseChart
+          [data]="lowStockChartData"
+          [options]="barChartOptions"
+          [type]="barChartType">
+        </canvas>
+      </div>
+    </div>
+  </div>
+</div>

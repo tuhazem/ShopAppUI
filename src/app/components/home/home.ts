@@ -20,7 +20,8 @@ export class Home implements OnInit {
     name: '',
     price: 0,
     description: '',
-    categoryId: 0 
+    categoryId: 0 ,
+    stock:0
   };
 
   
@@ -69,8 +70,8 @@ export class Home implements OnInit {
   }
 
   prepareAdd() {
-    this.isEditMode = false; // قلبنا الحالة لإضافة
-    this.newproduct = {id:0 , name: '', price: 0, description: '', categoryId: 0 }; // Reset form
+    this.isEditMode = false; 
+    this.newproduct = {id:0 , name: '', price: 0, description: '', categoryId: 0 , stock:0}; // Reset form
   }
 
   saveProduct() {
@@ -81,7 +82,7 @@ export class Home implements OnInit {
       next :()=>{
         alert("Upate Done")
         this.loadProducts()
-        this.newproduct = {id:0 , name: '', price: 0, description: '', categoryId: 0 }; // Reset form
+        this.newproduct = {id:0 , name: '', price: 0, description: '', categoryId: 0 , stock:0 }; // Reset form
 
       }
     });
@@ -91,7 +92,7 @@ export class Home implements OnInit {
       next: (response) => {
         alert("Product added successfully!");
         this.loadProducts(); // Refresh the product list after adding
-        this.newproduct = {id:0 , name: '', price: 0, description: '', categoryId: 0 }; // Reset form
+        this.newproduct = {id:0 , name: '', price: 0, description: '', categoryId: 0 , stock:0 }; // Reset form
       },
       error: (error) => {
         console.error('Error adding product:', error);

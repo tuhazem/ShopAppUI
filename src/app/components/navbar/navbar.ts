@@ -1,20 +1,23 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { Account } from '../../services/account';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
-  imports: [],
+  imports: [CommonModule, RouterModule],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
 export class Navbar {
 
-  constructor(private router: Router){}
+  constructor(private router: Router , public accountService:Account){}
   
   onLogout(){
-    localStorage.removeItem('ShopToken');
+    this.accountService.logout();
     alert("Logged out successfully!");
     this.router.navigate(['/login']);
   }
+  
 
 }
