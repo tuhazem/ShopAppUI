@@ -1,0 +1,38 @@
+<div class="sidebar-right glass-effect" *ngIf="accountService.isLoggedIn()">
+  <div class="brand-section">
+    <div class="brand-icon">
+      <i class="bi bi-cart4"></i>
+    </div>
+  </div>
+
+  <nav class="nav-links">
+    <a routerLink="/home" routerLinkActive="active" class="nav-item" title="Inventory">
+      <i class="bi bi-grid-1x2-fill"></i>
+      <span class="nav-text">Inventory</span>
+    </a>
+
+    <a routerLink="/orders" routerLinkActive="active" class="nav-item" title="Orders">
+      <i class="bi bi-receipt"></i>
+      <span class="nav-text">Orders</span>
+    </a>
+
+    <a routerLink="/customers" routerLinkActive="active" class="nav-item" title="Customers">
+      <i class="bi bi-people-fill"></i>
+      <span class="nav-text">Users</span>
+    </a>
+
+    <a routerLink="/dashboard" routerLinkActive="active" class="nav-item" title="Dashboard" *ngIf="accountService.isAdmin()">
+      <i class="bi bi-speedometer2"></i>
+      <span class="nav-text">Stats</span>
+    </a>
+  </nav>
+
+  <div class="user-section">
+    <div class="user-avatar" [title]="accountService.getUsername()">
+      {{ accountService.getUsername().charAt(0).toUpperCase() }}
+    </div>
+    <button class="logout-btn" (click)="onLogout()" title="Logout">
+      <i class="bi bi-box-arrow-right"></i>
+    </button>
+  </div>
+</div>

@@ -1,43 +1,38 @@
 import { Injectable } from '@angular/core';
-import { CreateProductModel, PaginatedResult, ProductModel } from '../models/product.model';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ProductDTO, CreateProductCommand, PaginatedResult } from '../models/product.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
-
-  baseUrl: string = 'https://localhost:7049/api/';
+  private baseUrl: string = 'https://localhost:7049/api/Product';
   
   constructor(private http: HttpClient) { }
   
-  getProducts(pageNumber: number, pageSize: number) {
+  getProducts(pageNumber: number = 1, pageSize: number = 10, searchTerm?: string, minPrice?: number, maxPrice?: number): Observable<PaginatedResult<ProductDTO>> {
+    let params: any = { pageNumber, pageSize };
+    if (searchTerm) params.searchTerm = searchTerm;
+    if (minPrice) params.minPrice = minPrice;
+    if (maxPrice) params.maxPrice = maxPrice;
 
-    return this.http.get<PaginatedResult<ProductModel>>(`${this.baseUrl}product`, {
-      params: {
-        pageNumber,
-        pageSize
-      }
-    });
+    return this.http.get<PaginatedResult<ProductDTO>>(this.baseUrl, { params });
   }
 
-  AddProduct(productData: CreateProductModel) {{
-    return this.http.post(`${this.baseUrl}product`, productData );
-  }}
+  getProductById(id: number): Observable<ProductDTO> {
+    return this.http.get<ProductDTO>(`${this.baseUrl}/${id}`);
+  }
 
-  getCategories() {
-  return this.http.get<any[]>('https://localhost:7049/api/category');
+  createProduct(command: CreateProductCommand): Observable<any> {
+    return this.http.post(this.baseUrl, command);
+  }
+
+  updateProduct(id: number, command: CreateProductCommand): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${id}`, command);
+  }
+
+  deleteProduct(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${id}`);
+  }
 }
-
-  DeleteProduct(id:number): Observable<any>{
-      return this.http.delete(`${this.baseUrl}Product/${id}`)
-  }
-
-  UpdateProduct(id:number , product: any):Observable<any>{
-    return this.http.put(`${this.baseUrl}Product/${id}` , product)
-  }
-
-
-}
-

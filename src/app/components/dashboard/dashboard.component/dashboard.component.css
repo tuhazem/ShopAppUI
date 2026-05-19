@@ -1,0 +1,32 @@
+.kpi-icon-v2 {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.shadow-primary { box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3); }
+.shadow-success { box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
+.shadow-warning { box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3); }
+.shadow-info { box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3); }
+
+.bg-soft-success { background-color: rgba(16, 185, 129, 0.1); }
+.bg-soft-info { background-color: rgba(6, 182, 212, 0.1); }
+
+.uppercase { text-transform: uppercase; }
+.letter-spacing { letter-spacing: 1px; }
+.fw-extrabold { font-weight: 800; }
+
+.btn-light {
+  background: #f1f5f9;
+  border: none;
+  font-weight: 600;
+  padding: 8px 16px;
+}
+
+.btn-light:hover {
+  background: #e2e8f0;
+}

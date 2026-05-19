@@ -3,35 +3,34 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Account } from '../../services/account';
-import { LoginModel } from '../../models/user.model';
+import { RegisterModel } from '../../models/user.model';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-register',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './login.html',
-  styleUrl: './login.css',
+  templateUrl: './register.html',
+  styleUrl: './register.css',
 })
-export class Login {
-  loginData: LoginModel = {
+export class Register {
+  registerData: RegisterModel = {
+    fullName: '',
+    username: '',
     email: '',
     password: ''
   };
 
   constructor(private account: Account, private router: Router) {}
 
-  onLogin() {
-    this.account.login(this.loginData).subscribe({
+  onRegister() {
+    this.account.register(this.registerData).subscribe({
       next: (res) => {
-        if (res.isAuthenticated) {
-          this.router.navigate(['/home']);
-        } else {
-          alert(res.message);
-        }
+        alert('Registration successful! Please login.');
+        this.router.navigate(['/login']);
       },
       error: (err) => {
         console.error(err);
-        alert('Login failed: ' + (err.error?.title || 'Invalid credentials'));
+        alert('Registration failed: ' + (err.error?.message || 'Unknown error'));
       }
     });
   }

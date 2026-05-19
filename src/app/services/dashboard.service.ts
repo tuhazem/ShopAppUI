@@ -1,17 +1,23 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+
+export interface DashboardStatsDto {
+    totalSalaryToday: number;
+    totalOrderToday: number;
+    topSellingProducts: { productName: string; timesSold: number }[];
+    lowStockAlert: { productName: string; currentStock: number }[];
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class DashboardService {
+  private baseUrl: string = 'https://localhost:7049/api/Admin/';
 
-  private apiurl = 'https://localhost:7049/api/Admin/dashboard-status'
-  constructor(private http:HttpClient){ }
+  constructor(private http: HttpClient) { }
 
-  getStatus(): Observable<any>{
-    return this.http.get(this.apiurl);
+  getStatus(): Observable<DashboardStatsDto> {
+    return this.http.get<DashboardStatsDto>(`${this.baseUrl}dashboard-status`);
   }
-  
 }

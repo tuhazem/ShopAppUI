@@ -1,0 +1,40 @@
+.backdrop-blur {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.brand-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-link {
+  color: #64748b;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  color: var(--primary);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.nav-link.active {
+  color: var(--primary) !important;
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.dropdown-item:hover {
+  background-color: rgba(99, 102, 241, 0.05);
+}
+
+.dropdown-item:active {
+  background-color: var(--primary);
+}
+
+.tracking-tighter {
+  letter-spacing: -1.5px;
+}

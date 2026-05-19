@@ -1,36 +1,61 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+<nav class="navbar navbar-expand-lg sticky-top bg-white bg-opacity-70 backdrop-blur border-bottom py-3">
   <div class="container">
-    <a class="navbar-brand" routerLink="/">Shop App</a>
+    <a class="navbar-brand d-flex align-items-center gap-3" routerLink="/home">
+      <div class="brand-logo bg-primary shadow-primary">
+        <i class="bi bi-cart-fill text-white"></i>
+      </div>
+      <span class="fw-extrabold fs-4 tracking-tighter text-dark">Shop<span class="text-primary">App</span></span>
+    </a>
     
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <ul class="navbar-nav mx-auto gap-2">
         <li class="nav-item">
-          <a class="nav-link" routerLinkActive="active" routerLink="/home">Main</a>
+          <a class="nav-link px-4 rounded-pill fw-semibold" routerLinkActive="active" routerLink="/home">
+            Inventory
+          </a>
         </li>
-
-        <!-- مش هيظهر غير للـ Admin بس -->
+        <li class="nav-item" *ngIf="accountService.isLoggedIn()">
+          <a class="nav-link px-4 rounded-pill fw-semibold" routerLinkActive="active" routerLink="/orders">
+            Orders
+          </a>
+        </li>
+        <li class="nav-item" *ngIf="accountService.isLoggedIn()">
+          <a class="nav-link px-4 rounded-pill fw-semibold" routerLinkActive="active" routerLink="/customers">
+            Customers
+          </a>
+        </li>
         <li class="nav-item" *ngIf="accountService.isAdmin()">
-          <a class="nav-link text-warning fw-bold" routerLinkActive="active" routerLink="/dashboard">
-            <i class="bi bi-speedometer2"></i> Dashboard
+          <a class="nav-link px-4 rounded-pill fw-bold text-primary" routerLinkActive="active" routerLink="/dashboard">
+            Dashboard
           </a>
         </li>
       </ul>
 
-      <div class="d-flex align-items-center">
-        <!-- لو اليوزر مش عامل Login -->
+      <div class="d-flex align-items-center gap-3">
         <ng-container *ngIf="!accountService.isLoggedIn()">
-          <a class="btn btn-outline-light btn-sm me-2" routerLink="/login">Login</a>
-          <a class="btn btn-primary btn-sm" routerLink="/register">Register</a>
+          <a class="btn btn-link text-secondary fw-bold text-decoration-none" routerLink="/login">Sign In</a>
+          <a class="btn btn-primary shadow-primary px-4 py-2" routerLink="/register">Sign Up</a>
         </ng-container>
 
-        <!-- لو اليوزر عامل Login يظهر زرار الـ Logout -->
         <ng-container *ngIf="accountService.isLoggedIn()">
-          <span class="text-light me-3 small">Welcome back!</span>
-          <button class="btn btn-outline-danger btn-sm" (click)="onLogout()">Logout</button>
+          <div class="dropdown">
+            <button class="btn glass-card border-0 p-1 pe-3 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+              <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                <i class="bi bi-person-fill"></i>
+              </div>
+              <span class="fw-bold text-dark small">{{ accountService.getUsername() }}</span>
+              <i class="bi bi-chevron-down small text-secondary"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end glass-card border-0 shadow-lg mt-3 p-2">
+              <li><a class="dropdown-item rounded-3 py-2 d-flex align-items-center gap-2" (click)="onLogout()" href="javascript:void(0)">
+                <i class="bi bi-box-arrow-right text-danger"></i> <span class="fw-semibold">Sign Out</span>
+              </a></li>
+            </ul>
+          </div>
         </ng-container>
       </div>
     </div>

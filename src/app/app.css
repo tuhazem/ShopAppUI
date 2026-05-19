@@ -1,0 +1,7 @@
+.content-wrapper {
+  margin-right: 90px;
+  min-height: 100vh;
+  transition: margin-right 0.3s ease;
+}
+
+/* When sidebar expands, we might want more margin, but for now 90px is safe for the floating bar */

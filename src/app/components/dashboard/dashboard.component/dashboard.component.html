@@ -1,50 +1,119 @@
-<p>dashboard.component works!</p>
-<!-- dashboard.component.html -->
-<div class="container mt-4">
-  <div class="row">
-    <!-- Total Sales Card -->
-    <div class="col-md-4">
-      <div class="card text-white bg-primary mb-3">
-        <div class="card-body text-center">
-          <h5 class="card-title">Today </h5>
-          <h2>{{ stats?.totalSalesToday | currency:'EGP' }}</h2>
-        </div>
-      </div>
+<div class="container py-5 animate-in">
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <div>
+      <h1 class="fw-extrabold text-dark mb-2" style="letter-spacing: -1px;">Analytics Dashboard</h1>
+      <p class="text-secondary fs-5 mb-0">Track your store performance and stock health</p>
     </div>
-
-    <!-- Count Card-->
-    <div class="col-md-4">
-      <div class="card text-white bg-success mb-3">
-        <div class="card-body text-center">
-          <h5 class="card-title">Number of Receipts</h5>
-          <h2>{{ stats?.totalOrdersToday }}</h2>
+    <div class="text-end">
+      <div class="glass-card px-4 py-2 d-inline-flex align-items-center">
+        <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3">
+          <i class="bi bi-calendar3 text-primary"></i>
         </div>
+        <span class="fw-bold text-dark">{{ today | date:'EEEE, MMMM d' }}</span>
       </div>
     </div>
   </div>
 
-  <div class="row mt-5">
+  <!-- KPI Cards -->
+  <div class="row g-4 mb-5">
+    <!-- Total Sales Today -->
+    <div class="col-md-6 col-lg-3">
+      <div class="glass-card p-4 h-100 border-start border-primary border-5">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+          <div class="kpi-icon-v2 bg-primary text-white shadow-primary">
+            <i class="bi bi-currency-dollar fs-4"></i>
+          </div>
+          <span class="badge bg-soft-success text-success">+12.5%</span>
+        </div>
+        <p class="text-secondary fw-medium mb-1 uppercase small letter-spacing">Total Salary Today</p>
+        <h2 class="fw-extrabold mb-0 text-dark">{{ stats?.totalSalaryToday | currency:'EGP ' }}</h2>
+      </div>
+    </div>
+
+    <!-- Total Orders Today -->
+    <div class="col-md-6 col-lg-3">
+      <div class="glass-card p-4 h-100 border-start border-success border-5">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+          <div class="kpi-icon-v2 bg-success text-white shadow-success">
+            <i class="bi bi-cart-check fs-4"></i>
+          </div>
+          <span class="badge bg-soft-info text-info">Live</span>
+        </div>
+        <p class="text-secondary fw-medium mb-1 uppercase small letter-spacing">Total Orders Today</p>
+        <h2 class="fw-extrabold mb-0 text-dark">{{ stats?.totalOrderToday }}</h2>
+      </div>
+    </div>
+
+    <!-- Low Stock Alerts -->
+    <div class="col-md-6 col-lg-3">
+      <div class="glass-card p-4 h-100 border-start border-warning border-5">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+          <div class="kpi-icon-v2 bg-warning text-white shadow-warning">
+            <i class="bi bi-exclamation-triangle fs-4"></i>
+          </div>
+          <span class="badge bg-danger rounded-pill">{{ stats?.lowStockAlert?.length || 0 }}</span>
+        </div>
+        <p class="text-secondary fw-medium mb-1 uppercase small letter-spacing">Low Stock Alerts</p>
+        <h2 class="fw-extrabold mb-0 text-dark">{{ stats?.lowStockAlert?.length || 0 }} <small class="fs-6 text-muted">Items</small></h2>
+      </div>
+    </div>
+
+    <!-- Top Selling Products Count -->
+    <div class="col-md-6 col-lg-3">
+      <div class="glass-card p-4 h-100 border-start border-info border-5">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+          <div class="kpi-icon-v2 bg-info text-white shadow-info">
+            <i class="bi bi-graph-up-arrow fs-4"></i>
+          </div>
+        </div>
+        <p class="text-secondary fw-medium mb-1 uppercase small letter-spacing">Trending Now</p>
+        <h2 class="fw-extrabold mb-0 text-dark">{{ stats?.topSellingProducts?.length || 0 }} <small class="fs-6 text-muted">Products</small></h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
     <!-- Most Ordered Product Chart -->
-    <div class="col-md-6">
-      <div class="card p-3 shadow">
-        <h4 class="text-center">Most Ordered Product</h4>
-        <canvas baseChart
-          [data]="barChartData"
-          [options]="barChartOptions"
-          [type]="barChartType">
-        </canvas>
+    <div class="col-lg-6">
+      <div class="glass-card p-4 h-100">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div class="d-flex align-items-center">
+            <div class="bg-primary bg-opacity-10 p-3 rounded-4 me-3 text-primary">
+              <i class="bi bi-bar-chart-fill fs-4"></i>
+            </div>
+            <h4 class="mb-0 fw-bold text-dark">Most Ordered</h4>
+          </div>
+          <button class="btn btn-light btn-sm rounded-3">View Report</button>
+        </div>
+        <div style="height: 350px;">
+          <canvas baseChart
+            [data]="barChartData"
+            [options]="barChartOptions"
+            [type]="barChartType">
+          </canvas>
+        </div>
       </div>
     </div>
 
     <!-- Low Stock Products Chart -->
-    <div class="col-md-6">
-      <div class="card p-3 shadow">
-        <h4 class="text-center">Low Stock Products</h4>
-        <canvas baseChart
-          [data]="lowStockChartData"
-          [options]="barChartOptions"
-          [type]="barChartType">
-        </canvas>
+    <div class="col-lg-6">
+      <div class="glass-card p-4 h-100">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <div class="d-flex align-items-center">
+            <div class="bg-danger bg-opacity-10 p-3 rounded-4 me-3 text-danger">
+              <i class="bi bi-lightning-charge-fill fs-4"></i>
+            </div>
+            <h4 class="mb-0 fw-bold text-dark">Restock Needed</h4>
+          </div>
+          <button class="btn btn-light btn-sm rounded-3 text-danger">Order Now</button>
+        </div>
+        <div style="height: 350px;">
+          <canvas baseChart
+            [data]="lowStockChartData"
+            [options]="barChartOptions"
+            [type]="barChartType">
+          </canvas>
+        </div>
       </div>
     </div>
   </div>

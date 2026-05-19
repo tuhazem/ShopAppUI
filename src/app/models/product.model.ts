@@ -1,24 +1,22 @@
-export interface ProductModel{
-    id:number;
-    name:string;
-    description:string;
-    price:number;
-    categoryName:string;
-
+export interface ProductDTO {
+    id: number;
+    name: string;
+    description: string;
+    price: number;
+    categoryName: string;
+    stock: number;
 }
 
-export interface CreateProductModel{
-
-    name:string;
-    description:string;
-    price:number;
-    categoryId:number;
-    stock:number;
-
+export interface CreateProductCommand {
+    name: string;
+    description: string;
+    price: number;
+    categoryId: number;
+    stock: number;
 }
 
 export interface PaginatedResult<T> {
-    items: ProductModel[]; 
+  items: T[]; 
   pageNumber: number;
   totalPages: number;
   totalCount: number;

@@ -1,150 +1,77 @@
-<div class="container mt-4">
-  <div class="card shadow border-0">
-    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-      <h5 class="mb-0">Product List</h5>
-      <span class="badge bg-light text-primary">Total Products: {{ products.length }}</span>
-    </div>
-    <div class="card-body">
-      <div class="table-responsive">
-        <!-- <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addModal">
-            Add Product
-        </button> -->
-        
-        <table class="table table-hover align-middle">
-          <thead class="table-light">
-            <tr>
-              <th>Name</th>
-              <th>Price</th>
-              <th>Description</th>
-              <th>Category</th>
-              <th class="text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of products">
-              <td class="fw-bold">{{ item.name }}</td>
-              <td>{{ item.price | currency:'EGP ' }}</td>
-              <td>
-                <span *ngIf="item.description; else noDesc" class="text-muted">
-                  {{ item.description }}
-                </span>
-                <ng-template #noDesc>
-                  <span class="text-muted fst-italic">No description provided.</span>
-                </ng-template>
-              </td>
-              <td>
-                <span class="badge bg-secondary">{{ item.categoryName }}</span>
-              </td>
-              <td class="text-center">
-                <button class="btn btn-outline-primary btn-sm me-1" data-bs-toggle="modal" data-bs-target="#addModal" 
-                (click)="onEdit(item)">Edit</button>
-                <button class="btn btn-outline-danger btn-sm" (click)="onDelete(item.id)" >Delete</button>
-              </td>
-            </tr>
-            
-            <tr *ngIf="products.length === 0">
-              <td colspan="5" class="text-center py-4 text-muted">
-                No products available at the moment, please check back later.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div class="card-footer bg-white d-flex justify-content-between align-items-center">
-  <small class="text-muted">Page {{pageNumber}} of {{totalPages}}</small>
-  
-  <nav>
-    <ul class="pagination mb-0">
-      <li class="page-item" [class.disabled]="pageNumber === 1">
-        <button class="page-item btn btn-sm btn-outline-primary me-1" (click)="changePage(pageNumber - 1)">Previous</button>
-      </li>
-      
-      <li class="page-item" [class.disabled]="pageNumber === totalPages">
-        <button class="page-item btn btn-sm btn-outline-primary" (click)="changePage(pageNumber + 1)">Next</button>
-      </li>
-    </ul>
-  </nav>
-</div>
+<div class="cinematic-container animate-in">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="display-1 fw-extrabold">Shop<span class="text-primary-gradient">App</span></h1>
+      <p class="lead text-secondary-v2">Your Premium Destination for Quality Products</p>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-value">{{ totalCount }}+</span>
+          <span class="stat-label">Products</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-value">24/7</span>
+          <span class="stat-label">Support</span>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <button class="btn btn-primary-v2" (click)="loadProducts()">Explore Inventory</button>
+        <button class="btn btn-outline-v2" (click)="downloadInventory()">
+          <i class="bi bi-download me-2"></i> Report
+        </button>
       </div>
     </div>
-  </div>
-</div>
+    <div class="hero-overlay"></div>
+  </section>
 
-
-
-<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal" (click)="prepareAdd()">
-  + Add Product
-</button>
-
-<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-success text-white">
-        <h5 class="modal-title">Add New Product</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+  <!-- Inventory Grid -->
+  <section class="inventory-section py-5">
+    <div class="section-header mb-5">
+      <div class="search-bar-v2">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Search our premium collection..." 
+               [ngModel]="searchTerm" (ngModelChange)="onSearch($event)">
       </div>
-
-      <form #productForm="ngForm">
-        <div class="modal-body">
-          
-          <div class="mb-3">
-            <label class="form-label">Product Name</label>
-            <input type="text" name="name" class="form-control" 
-                   [(ngModel)]="newproduct.name" required #nameVal="ngModel"
-                   [class.is-invalid]="nameVal.invalid && nameVal.touched">
-            <div class="invalid-feedback">Please enter a product name</div>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Product Description</label>
-            <textarea name="description" class="form-control" 
-                      [(ngModel)]="newproduct.description" required minlength="10" #descVal="ngModel"
-                      [class.is-invalid]="descVal.invalid && descVal.touched"></textarea>
-            <div class="invalid-feedback">Description is required (minimum 10 characters)</div>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Price</label>
-            <input type="number" name="price" class="form-control" 
-                   [(ngModel)]="newproduct.price" required min="1" #priceVal="ngModel"
-                   [class.is-invalid]="priceVal.invalid && priceVal.touched">
-            <div class="invalid-feedback">Price must be a positive number</div>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Category</label>
-            <select name="categoryId" class="form-select" 
-                    [(ngModel)]="newproduct.categoryId" required #catVal="ngModel"
-                    [class.is-invalid]="catVal.invalid && catVal.touched">
-              <option [ngValue]="null" disabled selected>-- Select Category --</option>
-              <option *ngFor="let cat of categories" [value]="cat.id">
-                {{ cat.name }}
-              </option>
-            </select>
-            <div class="invalid-feedback">Category is required</div>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Stock</label>
-            <input type="number" name="stock" class="form-control" 
-                   [(ngModel)]="newproduct.stock" required min="1" #priceVal="ngModel"
-                   [class.is-invalid]="priceVal.invalid && priceVal.touched">
-            <div class="invalid-feedback">Stock must be a positive number</div>
-          </div>
-
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          
-          <button type="button" class="btn btn-success" 
-                  [disabled]="productForm.invalid" 
-                  (click)="saveProduct()" data-bs-dismiss="modal">
-            Save Changes
-          </button>
-        </div>
-      </form>
-
     </div>
-  </div>
+
+    <div class="row g-4">
+      <div class="col-sm-6 col-md-4 col-xl-3" *ngFor="let p of products">
+        <div class="product-card-v2">
+          <div class="card-image-wrapper">
+            <div class="product-badge">{{ p.categoryName }}</div>
+            <div class="stock-status" [class.low-stock]="p.stock < 10">
+              {{ p.stock }} left
+            </div>
+            <i class="bi bi-box-seam card-icon"></i>
+          </div>
+          
+          <div class="card-content">
+            <h5 class="product-title">{{ p.name }}</h5>
+            <p class="product-desc">{{ p.description }}</p>
+            <div class="price-section">
+              <span class="currency">EGP</span>
+              <span class="price-value">{{ p.price }}</span>
+            </div>
+            <button class="btn order-btn-v2" (click)="quickOrder(p)" [disabled]="p.stock <= 0">
+              <i class="bi bi-cart-plus-fill me-2"></i> {{ p.stock > 0 ? 'Order Now' : 'Out of Stock' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-v2 mt-5" *ngIf="totalPages > 1">
+      <button class="pag-btn" (click)="changePage(pageNumber - 1)" [disabled]="pageNumber === 1">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      <div class="pag-info">
+        Page <span class="current">{{ pageNumber }}</span> of {{ totalPages }}
+      </div>
+      <button class="pag-btn" (click)="changePage(pageNumber + 1)" [disabled]="pageNumber === totalPages">
+        <i class="bi bi-arrow-right"></i>
+      </button>
+    </div>
+  </section>
 </div>

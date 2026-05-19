@@ -1,0 +1,59 @@
+.avatar-v2 {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.bg-soft-success { background-color: rgba(16, 185, 129, 0.1); }
+.bg-soft-danger { background-color: rgba(239, 68, 68, 0.1); }
+
+.btn-icon-v2 {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-soft-primary {
+  background-color: rgba(99, 102, 241, 0.1);
+  color: var(--primary);
+}
+
+.btn-soft-primary:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-soft-danger {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+.btn-soft-danger:hover {
+  background-color: var(--danger);
+  color: white;
+}
+
+.btn-soft-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.btn-soft-success:hover {
+  background-color: var(--success);
+  color: white;
+}
+
+.fw-extrabold { font-weight: 800; }
+.letter-spacing { letter-spacing: 0.5px; }

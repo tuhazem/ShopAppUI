@@ -1,5 +1,4 @@
 export interface AuthModel {
-
     message: string;
     isAuthenticated: boolean;
     username: string;
@@ -10,6 +9,13 @@ export interface AuthModel {
 } 
 
 export interface LoginModel {
+    email: string;
+    password: string;
+}
+
+export interface RegisterModel {
+    fullName: string;
+    username: string;
     email: string;
     password: string;
 }
