@@ -1,5 +1,7 @@
 <app-sidebar></app-sidebar>
+<app-toast-container></app-toast-container>
 
-<main class="content-wrapper">
+<main class="content-area" [class.no-sidebar]="!accountService.isLoggedIn()">
   <router-outlet></router-outlet>
 </main>
+

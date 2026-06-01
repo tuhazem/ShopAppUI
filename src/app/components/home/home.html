@@ -1,77 +1,233 @@
-<div class="cinematic-container animate-in">
-  <!-- Hero Section -->
-  <section class="hero-section">
+<div class="page-container fade-in">
+  <!-- Cinematic Header / Hero -->
+  <header class="page-header premium-hero">
+    <div class="hero-glow"></div>
     <div class="hero-content">
-      <h1 class="display-1 fw-extrabold">Shop<span class="text-primary-gradient">App</span></h1>
-      <p class="lead text-secondary-v2">Your Premium Destination for Quality Products</p>
-      <div class="hero-stats">
-        <div class="stat-item">
-          <span class="stat-value">{{ totalCount }}+</span>
-          <span class="stat-label">Products</span>
+      <span class="hero-eyebrow text-mono">INVENTORY MANAGEMENT</span>
+      <h1 class="display-title">ShopUI <span class="accent-text-glow">Console</span></h1>
+      <p class="hero-desc">Real-time inventory orchestration, quick transaction settlement, and stock telemetry.</p>
+      
+      <div class="hero-stats mt-2">
+        <div class="hero-stat-card">
+          <span class="stat-num text-mono">{{ totalCount }}</span>
+          <span class="stat-lbl">Active Skus</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat-item">
-          <span class="stat-value">24/7</span>
-          <span class="stat-label">Support</span>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat-card">
+          <span class="stat-num text-mono">240+</span>
+          <span class="stat-lbl">Daily Orders</span>
         </div>
       </div>
-      <div class="hero-actions">
-        <button class="btn btn-primary-v2" (click)="loadProducts()">Explore Inventory</button>
-        <button class="btn btn-outline-v2" (click)="downloadInventory()">
-          <i class="bi bi-download me-2"></i> Report
+
+      <div class="hero-actions mt-2">
+        <button class="btn-premium btn-primary-v2" (click)="loadProducts()" [disabled]="isLoadingProducts">
+          <i class="bi bi-arrow-clockwise" [class.spin-icon]="isLoadingProducts"></i>
+          <span>Sync Stock</span>
+        </button>
+        <button class="btn-premium btn-ghost" (click)="downloadInventory()" [disabled]="isDownloadingReport">
+          @if (isDownloadingReport) {
+            <div class="spinner spinner-sm"></div>
+            <span>Exporting...</span>
+          } @else {
+            <i class="bi bi-file-earmark-excel"></i>
+            <span>Export XLS</span>
+          }
         </button>
       </div>
     </div>
-    <div class="hero-overlay"></div>
-  </section>
+  </header>
 
-  <!-- Inventory Grid -->
-  <section class="inventory-section py-5">
-    <div class="section-header mb-5">
-      <div class="search-bar-v2">
-        <i class="bi bi-search"></i>
-        <input type="text" placeholder="Search our premium collection..." 
-               [ngModel]="searchTerm" (ngModelChange)="onSearch($event)">
-      </div>
+  <!-- Inventory Catalog Control Bar -->
+  <div class="catalog-control-bar glass-card mb-2">
+    <div class="search-container">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Search catalog by name..." 
+             [ngModel]="searchTerm" (ngModelChange)="onSearch($event)">
     </div>
+    <div class="badge badge-indigo text-mono">
+      PAGE {{ pageNumber }} OF {{ totalPages || 1 }}
+    </div>
+  </div>
 
-    <div class="row g-4">
-      <div class="col-sm-6 col-md-4 col-xl-3" *ngFor="let p of products">
-        <div class="product-card-v2">
-          <div class="card-image-wrapper">
-            <div class="product-badge">{{ p.categoryName }}</div>
-            <div class="stock-status" [class.low-stock]="p.stock < 10">
-              {{ p.stock }} left
+  <!-- Main Grid / List -->
+  @if (isLoadingProducts) {
+    <!-- Skeleton Loaders -->
+    <div class="product-grid">
+      @for (i of [1,2,3,4,5,6,7,8]; track $index) {
+        <div class="premium-card skeleton-card-wrapper">
+          <div class="skeleton skeleton-img mb-1"></div>
+          <div class="skeleton skeleton-title"></div>
+          <div class="skeleton skeleton-text"></div>
+          <div class="skeleton skeleton-text skeleton-text-sm mb-2"></div>
+          <div class="skeleton skeleton-btn"></div>
+        </div>
+      }
+    </div>
+  } @else {
+    @if (products.length === 0) {
+      <!-- Empty State -->
+      <div class="empty-state glass-card">
+        <i class="bi bi-box-seam"></i>
+        <h3>No Products Found</h3>
+        <p>No inventory items match your search criteria. Try refining your keyword.</p>
+        <button class="btn-premium btn-ghost mt-1" (click)="searchTerm = ''; onSearch('')">Reset Search</button>
+      </div>
+    } @else {
+      <!-- Product Grid -->
+      <div class="product-grid">
+        @for (p of products; track p.id) {
+          <div class="product-card premium-card" [class.out-of-stock]="p.stock <= 0">
+            <div class="product-card-header">
+              <span class="product-category text-mono">{{ p.categoryName || 'General' }}</span>
+              <span class="stock-badge" [class.low]="p.stock < 10 && p.stock > 0" [class.out]="p.stock <= 0">
+                @if (p.stock <= 0) {
+                  Out Of Stock
+                } @else if (p.stock < 10) {
+                  Only {{ p.stock }} Left
+                } @else {
+                  {{ p.stock }} in Stock
+                }
+              </span>
             </div>
-            <i class="bi bi-box-seam card-icon"></i>
+
+            <div class="product-card-body">
+              <h3 class="product-title">{{ p.name }}</h3>
+              <p class="product-desc">{{ p.description || 'No description available for this SKU.' }}</p>
+            </div>
+
+            <div class="product-card-footer">
+              <div class="price-tag">
+                <span class="currency">EGP</span>
+                <span class="value text-mono">{{ p.price | number:'1.2-2' }}</span>
+              </div>
+              
+              <button class="btn-premium btn-primary-v2 buy-btn" 
+                      (click)="openQuickOrderDrawer(p)"
+                      [disabled]="p.stock <= 0">
+                <i class="bi bi-lightning-charge-fill"></i>
+                <span>Quick Buy</span>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Pagination -->
+      @if (totalPages > 1) {
+        <div class="pagination-premium">
+          <button (click)="changePage(pageNumber - 1)" [disabled]="pageNumber === 1" title="Previous page">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <span class="pag-info">
+            Page <span class="current">{{ pageNumber }}</span> of {{ totalPages }}
+          </span>
+          <button (click)="changePage(pageNumber + 1)" [disabled]="pageNumber === totalPages" title="Next page">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      }
+    }
+  }
+</div>
+
+<!-- Slide-Out Quick Checkout Drawer -->
+@if (isDrawerOpen && selectedProduct) {
+  <div class="drawer-overlay" (click)="closeDrawer()"></div>
+  <aside class="drawer-panel" role="dialog" aria-modal="true">
+    <header class="drawer-header">
+      <div class="drawer-header-title">
+        <i class="bi bi-bag-check-fill text-accent"></i>
+        <h3 class="text-mono">Quick Settlement</h3>
+      </div>
+      <button class="btn-icon" (click)="closeDrawer()" aria-label="Close drawer">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </header>
+
+    <div class="drawer-body">
+      <!-- Product Summary Box -->
+      <div class="summary-box glass-card mb-2">
+        <div class="summary-meta">
+          <span class="category text-mono">{{ selectedProduct.categoryName }}</span>
+          <h4 class="name">{{ selectedProduct.name }}</h4>
+        </div>
+        <div class="summary-price-details mt-1">
+          <div class="detail-row">
+            <span class="text-secondary text-sm">Unit Price</span>
+            <span class="text-mono">EGP {{ selectedProduct.price | number:'1.2-2' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="text-secondary text-sm">Available stock</span>
+            <span class="badge" [class.badge-indigo]="selectedProduct.stock >= 10" [class.badge-amber]="selectedProduct.stock < 10">
+              {{ selectedProduct.stock }} items
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checkout Form -->
+      <div class="checkout-form">
+        <!-- Customer Search/Select -->
+        <div class="form-group">
+          <label class="form-label">Select Customer</label>
+          <div class="search-container mb-1" style="max-width: 100%">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="Filter customer name or ID..." [(ngModel)]="customerSearchTerm">
           </div>
           
-          <div class="card-content">
-            <h5 class="product-title">{{ p.name }}</h5>
-            <p class="product-desc">{{ p.description }}</p>
-            <div class="price-section">
-              <span class="currency">EGP</span>
-              <span class="price-value">{{ p.price }}</span>
-            </div>
-            <button class="btn order-btn-v2" (click)="quickOrder(p)" [disabled]="p.stock <= 0">
-              <i class="bi bi-cart-plus-fill me-2"></i> {{ p.stock > 0 ? 'Order Now' : 'Out of Stock' }}
+          <div class="customer-select-list">
+            @if (filteredCustomers.length === 0) {
+              <div class="text-muted text-xs p-1 text-center">No customers match your criteria.</div>
+            } @else {
+              @for (c of filteredCustomers; track c.id) {
+                <div class="customer-option-item" 
+                     [class.selected]="selectedCustomerId === c.id"
+                     (click)="selectedCustomerId = c.id">
+                  <div class="cust-info">
+                    <span class="name">{{ c.name }}</span>
+                    <span class="email text-secondary text-xs">{{ c.email || 'No email' }}</span>
+                  </div>
+                  <div class="cust-badge">
+                    <span class="id-tag text-mono">ID: {{ c.id }}</span>
+                  </div>
+                </div>
+              }
+            }
+          </div>
+        </div>
+
+        <!-- Quantity Stepper -->
+        <div class="form-group">
+          <label class="form-label">Transaction Quantity</label>
+          <div class="quantity-stepper">
+            <button class="step-btn" type="button" (click)="decrementQuantity()" [disabled]="orderQuantity <= 1">
+              <i class="bi bi-dash"></i>
             </button>
+            <input type="number" class="stepper-input text-mono" [(ngModel)]="orderQuantity" 
+                   min="1" [max]="selectedProduct.stock" readonly>
+            <button class="step-btn" type="button" (click)="incrementQuantity()" [disabled]="orderQuantity >= selectedProduct.stock">
+              <i class="bi bi-plus"></i>
+            </button>
+          </div>
+          <div class="text-secondary text-xs mt-1 text-right">
+            Total Cost: <span class="text-accent fw-700 text-mono">EGP {{ (selectedProduct.price * orderQuantity) | number:'1.2-2' }}</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Pagination -->
-    <div class="pagination-v2 mt-5" *ngIf="totalPages > 1">
-      <button class="pag-btn" (click)="changePage(pageNumber - 1)" [disabled]="pageNumber === 1">
-        <i class="bi bi-arrow-left"></i>
+    <footer class="drawer-footer">
+      <button class="btn-premium btn-primary-v2 w-100" 
+              (click)="submitQuickOrder()" 
+              [disabled]="!selectedCustomerId || orderQuantity <= 0 || isOrdering">
+        @if (isOrdering) {
+          <div class="spinner spinner-sm"></div>
+          <span>Processing Transaction...</span>
+        } @else {
+          <i class="bi bi-shield-check"></i>
+          <span>Confirm Settlement</span>
+        }
       </button>
-      <div class="pag-info">
-        Page <span class="current">{{ pageNumber }}</span> of {{ totalPages }}
-      </div>
-      <button class="pag-btn" (click)="changePage(pageNumber + 1)" [disabled]="pageNumber === totalPages">
-        <i class="bi bi-arrow-right"></i>
-      </button>
-    </div>
-  </section>
-</div>
+    </footer>
+  </aside>
+}

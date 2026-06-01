@@ -1,120 +1,203 @@
-<div class="container py-5 animate-in">
-  <div class="d-flex justify-content-between align-items-center mb-5">
+<div class="page-container fade-in">
+  <!-- Header -->
+  <header class="page-header d-flex justify-content-between align-items-center">
     <div>
-      <h1 class="fw-extrabold text-dark mb-2" style="letter-spacing: -1px;">Analytics Dashboard</h1>
-      <p class="text-secondary fs-5 mb-0">Track your store performance and stock health</p>
+      <span class="text-mono text-xs text-accent fw-600">SYSTEM TELEMETRY</span>
+      <h1 class="mt-1">Analytics Dashboard</h1>
+      <p class="text-secondary text-sm">Real-time telemetry, transaction volumes, stock alerts, and catalog distributions.</p>
     </div>
-    <div class="text-end">
-      <div class="glass-card px-4 py-2 d-inline-flex align-items-center">
-        <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3">
-          <i class="bi bi-calendar3 text-primary"></i>
-        </div>
-        <span class="fw-bold text-dark">{{ today | date:'EEEE, MMMM d' }}</span>
+    
+    <div class="d-flex align-items-center gap-md">
+      <div class="glass-card date-badge px-3 py-2">
+        <i class="bi bi-calendar3 text-accent me-2"></i>
+        <span class="text-mono text-sm fw-600">{{ today | date:'EEEE, MMM d, y' }}</span>
       </div>
+      <button class="btn-premium btn-ghost" (click)="loadStats()" [disabled]="isLoading">
+        <i class="bi bi-arrow-clockwise" [class.spin-icon]="isLoading"></i>
+        <span>Sync</span>
+      </button>
     </div>
-  </div>
+  </header>
 
-  <!-- KPI Cards -->
-  <div class="row g-4 mb-5">
-    <!-- Total Sales Today -->
-    <div class="col-md-6 col-lg-3">
-      <div class="glass-card p-4 h-100 border-start border-primary border-5">
-        <div class="d-flex justify-content-between align-items-start mb-4">
-          <div class="kpi-icon-v2 bg-primary text-white shadow-primary">
-            <i class="bi bi-currency-dollar fs-4"></i>
-          </div>
-          <span class="badge bg-soft-success text-success">+12.5%</span>
-        </div>
-        <p class="text-secondary fw-medium mb-1 uppercase small letter-spacing">Total Salary Today</p>
-        <h2 class="fw-extrabold mb-0 text-dark">{{ stats?.totalSalaryToday | currency:'EGP ' }}</h2>
-      </div>
-    </div>
-
-    <!-- Total Orders Today -->
-    <div class="col-md-6 col-lg-3">
-      <div class="glass-card p-4 h-100 border-start border-success border-5">
-        <div class="d-flex justify-content-between align-items-start mb-4">
-          <div class="kpi-icon-v2 bg-success text-white shadow-success">
-            <i class="bi bi-cart-check fs-4"></i>
-          </div>
-          <span class="badge bg-soft-info text-info">Live</span>
-        </div>
-        <p class="text-secondary fw-medium mb-1 uppercase small letter-spacing">Total Orders Today</p>
-        <h2 class="fw-extrabold mb-0 text-dark">{{ stats?.totalOrderToday }}</h2>
-      </div>
-    </div>
-
-    <!-- Low Stock Alerts -->
-    <div class="col-md-6 col-lg-3">
-      <div class="glass-card p-4 h-100 border-start border-warning border-5">
-        <div class="d-flex justify-content-between align-items-start mb-4">
-          <div class="kpi-icon-v2 bg-warning text-white shadow-warning">
-            <i class="bi bi-exclamation-triangle fs-4"></i>
-          </div>
-          <span class="badge bg-danger rounded-pill">{{ stats?.lowStockAlert?.length || 0 }}</span>
-        </div>
-        <p class="text-secondary fw-medium mb-1 uppercase small letter-spacing">Low Stock Alerts</p>
-        <h2 class="fw-extrabold mb-0 text-dark">{{ stats?.lowStockAlert?.length || 0 }} <small class="fs-6 text-muted">Items</small></h2>
-      </div>
-    </div>
-
-    <!-- Top Selling Products Count -->
-    <div class="col-md-6 col-lg-3">
-      <div class="glass-card p-4 h-100 border-start border-info border-5">
-        <div class="d-flex justify-content-between align-items-start mb-4">
-          <div class="kpi-icon-v2 bg-info text-white shadow-info">
-            <i class="bi bi-graph-up-arrow fs-4"></i>
+  @if (isLoading && !stats) {
+    <!-- KPI Shimmer States -->
+    <div class="orders-metrics mb-2">
+      @for (item of [1,2,3,4]; track $index) {
+        <div class="premium-card d-flex align-items-center gap-md" style="height: 90px;">
+          <div class="skeleton skeleton-avatar"></div>
+          <div class="flex-1">
+            <div class="skeleton skeleton-text" style="width: 40%"></div>
+            <div class="skeleton skeleton-title" style="width: 70%; margin-bottom: 0;"></div>
           </div>
         </div>
-        <p class="text-secondary fw-medium mb-1 uppercase small letter-spacing">Trending Now</p>
-        <h2 class="fw-extrabold mb-0 text-dark">{{ stats?.topSellingProducts?.length || 0 }} <small class="fs-6 text-muted">Products</small></h2>
+      }
+    </div>
+
+    <!-- Charts Shimmer States -->
+    <div class="charts-grid mt-2">
+      <div class="premium-card p-4" style="height: 450px;">
+        <div class="skeleton skeleton-title mb-2"></div>
+        <div class="skeleton flex-1" style="height: 300px; width: 100%; border-radius: 8px;"></div>
+      </div>
+      <div class="premium-card p-4" style="height: 450px;">
+        <div class="skeleton skeleton-title mb-2"></div>
+        <div class="skeleton flex-1" style="height: 300px; width: 100%; border-radius: 8px;"></div>
       </div>
     </div>
-  </div>
+  } @else {
+    <!-- KPI Cards -->
+    <section class="orders-metrics mb-2 animate-in">
+      <!-- Total Sales Today -->
+      <div class="stat-card">
+        <div class="stat-icon emerald">
+          <i class="bi bi-cash-stack"></i>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Sales Turnover (Today)</span>
+          <h3 class="stat-value text-mono text-success">
+            EGP {{ (stats?.totalSalaryToday || 0) | number:'1.2-2' }}
+          </h3>
+        </div>
+      </div>
 
-  <div class="row g-4">
-    <!-- Most Ordered Product Chart -->
-    <div class="col-lg-6">
-      <div class="glass-card p-4 h-100">
-        <div class="d-flex align-items-center justify-content-between mb-4">
-          <div class="d-flex align-items-center">
-            <div class="bg-primary bg-opacity-10 p-3 rounded-4 me-3 text-primary">
-              <i class="bi bi-bar-chart-fill fs-4"></i>
+      <!-- Total Orders Today -->
+      <div class="stat-card">
+        <div class="stat-icon indigo">
+          <i class="bi bi-cart-check"></i>
+        </div>
+        <div class="stat-info">
+          <div class="d-flex align-items-center gap-sm">
+            <span class="stat-label">Orders Logged (Today)</span>
+            <span class="pulse-active-badge" title="Live Telemetry Updates"></span>
+          </div>
+          <h3 class="stat-value text-mono">
+            {{ stats?.totalOrderToday || 0 }}
+          </h3>
+        </div>
+      </div>
+
+      <!-- Low Stock Alerts -->
+      <div class="stat-card">
+        <div class="stat-icon red">
+          <i class="bi bi-exclamation-triangle"></i>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Depleted Stock SKUs</span>
+          <h3 class="stat-value text-mono text-danger">
+            {{ stats?.lowStockAlert?.length || 0 }}
+          </h3>
+        </div>
+      </div>
+
+      <!-- Trending Category Count -->
+      <div class="stat-card">
+        <div class="stat-icon amber">
+          <i class="bi bi-lightning-charge"></i>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Top Selling Products</span>
+          <h3 class="stat-value text-mono text-warning">
+            {{ stats?.topSellingProducts?.length || 0 }}
+          </h3>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Section -->
+    <section class="charts-grid mt-2 mb-2 animate-in">
+      <!-- Top Selling Products Chart -->
+      <div class="chart-card glass-card p-4">
+        <header class="chart-header mb-2 d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center gap-md">
+            <div class="chart-header-icon bg-indigo-muted text-accent">
+              <i class="bi bi-bar-chart-line-fill"></i>
             </div>
-            <h4 class="mb-0 fw-bold text-dark">Most Ordered</h4>
-          </div>
-          <button class="btn btn-light btn-sm rounded-3">View Report</button>
-        </div>
-        <div style="height: 350px;">
-          <canvas baseChart
-            [data]="barChartData"
-            [options]="barChartOptions"
-            [type]="barChartType">
-          </canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- Low Stock Products Chart -->
-    <div class="col-lg-6">
-      <div class="glass-card p-4 h-100">
-        <div class="d-flex align-items-center justify-content-between mb-4">
-          <div class="d-flex align-items-center">
-            <div class="bg-danger bg-opacity-10 p-3 rounded-4 me-3 text-danger">
-              <i class="bi bi-lightning-charge-fill fs-4"></i>
+            <div>
+              <h3 class="text-mono text-sm fw-700">Top Velocity SKUs</h3>
+              <p class="text-secondary text-xs">Distribution of most ordered inventory items</p>
             </div>
-            <h4 class="mb-0 fw-bold text-dark">Restock Needed</h4>
           </div>
-          <button class="btn btn-light btn-sm rounded-3 text-danger">Order Now</button>
-        </div>
-        <div style="height: 350px;">
-          <canvas baseChart
-            [data]="lowStockChartData"
-            [options]="barChartOptions"
-            [type]="barChartType">
-          </canvas>
+        </header>
+        
+        <div class="chart-canvas-container">
+          @if (stats?.topSellingProducts?.length === 0) {
+            <div class="empty-chart-text text-muted text-center py-4">No velocity logs recorded.</div>
+          } @else {
+            <canvas baseChart
+              [data]="barChartData"
+              [options]="barChartOptions"
+              [type]="barChartType">
+            </canvas>
+          }
         </div>
       </div>
-    </div>
-  </div>
+
+      <!-- Low Stock Alerts Chart -->
+      <div class="chart-card glass-card p-4">
+        <header class="chart-header mb-2 d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center gap-md">
+            <div class="chart-header-icon bg-red-muted text-danger">
+              <i class="bi bi-shield-exclamation"></i>
+            </div>
+            <div>
+              <h3 class="text-mono text-sm fw-700">Depletion Telemetry</h3>
+              <p class="text-secondary text-xs">SKUs currently approaching threshold level limit</p>
+            </div>
+          </div>
+        </header>
+
+        <div class="chart-canvas-container">
+          @if (stats?.lowStockAlert?.length === 0) {
+            <div class="empty-chart-text text-muted text-center py-4">All SKU stocks are fully satisfied.</div>
+          } @else {
+            <canvas baseChart
+              [data]="lowStockChartData"
+              [options]="barChartOptions"
+              [type]="barChartType">
+            </canvas>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Detailed Low Stock Directory Table -->
+    @if (stats?.lowStockAlert && stats!.lowStockAlert!.length > 0) {
+      <section class="alert-details-section glass-card p-4 animate-in">
+        <header class="alert-section-header mb-2">
+          <h3 class="text-mono text-sm fw-700 text-danger d-flex align-items-center gap-sm">
+            <i class="bi bi-shield-fill-exclamation"></i>
+            <span>Action Required: Restock Alerts</span>
+          </h3>
+          <p class="text-secondary text-xs">Below products are running critically low on stock reserves. Immediate restock recommended.</p>
+        </header>
+
+        <div style="overflow-x: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Product / SKU ID</th>
+                <th>Product Title</th>
+                <th class="text-right">Available Stock</th>
+                <th class="text-right">Access Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (alert of stats?.lowStockAlert; track $index) {
+                <tr class="alert-row">
+                  <td class="text-mono text-xs text-muted">SKU-#{{ $index + 1 }}</td>
+                  <td class="fw-700 text-primary">{{ alert.productName }}</td>
+                  <td class="text-right fw-800 text-mono text-danger">
+                    {{ alert.currentStock }} left
+                  </td>
+                  <td class="text-right">
+                    <span class="badge badge-red text-mono">CRITICAL</span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  }
 </div>

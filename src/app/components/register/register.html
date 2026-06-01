@@ -1,0 +1,97 @@
+<div class="register-wrapper">
+  <!-- Glowing background blobs -->
+  <div class="bg-glow blob-1"></div>
+  <div class="bg-glow blob-2"></div>
+
+  <div class="register-card glass-card">
+    <div class="register-header">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <i class="bi bi-person-plus-fill"></i>
+        </div>
+      </div>
+      <h2 class="text-mono">ShopUI</h2>
+      <p class="text-secondary text-sm">Create a new developer console credential.</p>
+    </div>
+
+    <form #registerForm="ngForm" (ngSubmit)="onRegister()" autocomplete="off">
+      <div class="form-group">
+        <label for="fullName" class="form-label">Full Name</label>
+        <div class="input-icon-wrapper">
+          <i class="bi bi-person"></i>
+          <input type="text" id="fullName" name="fullName" class="input-premium" 
+                 placeholder="Hazem Mohamed" [(ngModel)]="registerData.fullName" 
+                 required #fullNameVal="ngModel" [disabled]="isLoading"
+                 [class.is-invalid]="fullNameVal.invalid && fullNameVal.touched">
+        </div>
+        @if (fullNameVal.invalid && fullNameVal.touched) {
+          <div class="error-message text-xs">Full Name is required.</div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="username" class="form-label">Username</label>
+        <div class="input-icon-wrapper">
+          <i class="bi bi-person-badge"></i>
+          <input type="text" id="username" name="username" class="input-premium" 
+                 placeholder="hazem_dev" [(ngModel)]="registerData.username" 
+                 required #userVal="ngModel" [disabled]="isLoading"
+                 [class.is-invalid]="userVal.invalid && userVal.touched">
+        </div>
+        @if (userVal.invalid && userVal.touched) {
+          <div class="error-message text-xs">Username is required.</div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address</label>
+        <div class="input-icon-wrapper">
+          <i class="bi bi-envelope"></i>
+          <input type="email" id="email" name="email" class="input-premium" 
+                 placeholder="name@example.com" [(ngModel)]="registerData.email" 
+                 required email #emailVal="ngModel" [disabled]="isLoading"
+                 [class.is-invalid]="emailVal.invalid && emailVal.touched">
+        </div>
+        @if (emailVal.invalid && emailVal.touched) {
+          <div class="error-message text-xs">Please enter a valid email.</div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <div class="input-icon-wrapper">
+          <i class="bi bi-shield-lock"></i>
+          <input [type]="showPassword ? 'text' : 'password'" id="password" name="password" 
+                 class="input-premium" placeholder="••••••••" [(ngModel)]="registerData.password" 
+                 required minlength="6" #passVal="ngModel" [disabled]="isLoading"
+                 [class.is-invalid]="passVal.invalid && passVal.touched">
+          <button type="button" class="password-toggle-btn" (click)="togglePasswordVisibility()" 
+                  [disabled]="isLoading" [title]="showPassword ? 'Hide password' : 'Show password'">
+            <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+          </button>
+        </div>
+        @if (passVal.invalid && passVal.touched) {
+          <div class="error-message text-xs">Password must be at least 6 characters.</div>
+        }
+      </div>
+
+      <button type="submit" class="btn-premium btn-primary-v2 w-100 mt-2" 
+              [disabled]="!registerForm.valid || isLoading">
+        @if (isLoading) {
+          <div class="spinner spinner-sm"></div>
+          <span>Registering...</span>
+        } @else {
+          <span>Create Account</span>
+          <i class="bi bi-check-circle-fill"></i>
+        }
+      </button>
+
+      <div class="card-footer mt-2">
+        <p class="text-secondary text-sm">
+          Already registered? 
+          <a routerLink="/login" class="text-accent fw-600">Sign in instead</a>
+        </p>
+      </div>
+    </form>
+  </div>
+</div>

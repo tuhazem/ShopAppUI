@@ -1,128 +1,232 @@
-<div class="container py-5 animate-in">
-  <div class="d-flex justify-content-between align-items-end mb-5">
+<div class="page-container fade-in">
+  <!-- Header -->
+  <header class="page-header d-flex justify-content-between align-items-center">
     <div>
-      <h1 class="fw-extrabold text-dark mb-2" style="letter-spacing: -1px;">Orders & Revenue</h1>
-      <p class="text-secondary fs-5 mb-0">Monitor transactions and generate professional invoices</p>
+      <span class="text-mono text-xs text-accent fw-600">SALES JOURNAL</span>
+      <h1 class="mt-1">Orders & Ledger</h1>
+      <p class="text-secondary text-sm">Review transaction logs, download PDF receipts, and queue new orders.</p>
     </div>
-    <button class="btn btn-primary shadow-primary px-4 d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#orderModal">
-      <i class="bi bi-plus-circle-fill fs-5"></i> <span>Create New Order</span>
+    
+    <button class="btn-premium btn-primary-v2" (click)="openModal()">
+      <i class="bi bi-plus-circle"></i>
+      <span>Draft New Order</span>
     </button>
-  </div>
+  </header>
+
+  <!-- Aggregates Dashboard -->
+  <section class="orders-metrics mb-2">
+    <div class="stat-card">
+      <div class="stat-icon indigo">
+        <i class="bi bi-receipt-cutoff"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Total Transactions</span>
+        <h3 class="stat-value text-mono">{{ orders.length }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon emerald">
+        <i class="bi bi-wallet2"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Cumulative Revenue</span>
+        <h3 class="stat-value text-mono">EGP {{ totalRevenue | number:'1.2-2' }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon amber">
+        <i class="bi bi-graph-up-arrow"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Average Order Size</span>
+        <h3 class="stat-value text-mono">EGP {{ averageOrderValue | number:'1.2-2' }}</h3>
+      </div>
+    </div>
+  </section>
 
   <!-- Orders Table -->
-  <div class="glass-card overflow-hidden">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <thead class="bg-primary bg-opacity-10">
-          <tr>
-            <th class="ps-4 py-4">Transaction ID</th>
-            <th class="py-4">Customer Name</th>
-            <th class="py-4">Placement Date</th>
-            <th class="py-4">Total Amount</th>
-            <th class="text-end pe-4 py-4">Invoice Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let o of orders" class="border-bottom">
-            <td class="ps-4 py-4">
-              <div class="d-flex align-items-center">
-                <div class="order-badge bg-primary bg-opacity-10 text-primary me-3">
-                  <i class="bi bi-hash"></i>
-                </div>
-                <span class="fw-extrabold text-dark">{{ o.id }}</span>
-              </div>
-            </td>
-            <td class="py-4 fw-bold text-secondary">{{ o.customerName }}</td>
-            <td class="py-4 text-muted small">{{ o.orderDate | date:'MMM d, y, h:mm a' }}</td>
-            <td class="py-4">
-              <span class="fw-extrabold text-primary fs-5">{{ o.totalAmount | currency:'EGP ' }}</span>
-            </td>
-            <td class="text-end pe-4 py-4">
-              <button class="btn btn-soft-danger rounded-pill px-4 btn-sm d-inline-flex align-items-center gap-2" (click)="downloadInvoice(o.id)">
-                <i class="bi bi-file-earmark-pdf-fill"></i> <span class="fw-bold">Download PDF</span>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- Order Modal -->
-<div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg rounded-4">
-      <div class="modal-header border-0 pb-0">
-        <h5 class="modal-title fw-bold">Create New Order</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body py-4">
-        <!-- Customer Select -->
-        <div class="mb-4">
-          <label class="form-label fw-medium small text-muted text-uppercase">1. Select Customer</label>
-          <select class="form-select" [(ngModel)]="newOrder.customerId" name="customerId">
-            <option [value]="0" disabled>-- Choose Customer --</option>
-            <option *ngFor="let c of customers" [value]="c.id">{{ c.name }}</option>
-          </select>
-        </div>
-
-        <!-- Add Items -->
-        <div class="mb-4">
-          <label class="form-label fw-medium small text-muted text-uppercase">2. Add Products</label>
-          <div class="row g-2">
-            <div class="col-md-7">
-              <select class="form-select" [(ngModel)]="selectedProductId" name="selectedProductId">
-                <option [value]="0" disabled>-- Select Product --</option>
-                <option *ngFor="let p of products" [value]="p.id">{{ p.name }} - {{ p.price | currency:'EGP' }} (Stock: {{p.stock}})</option>
-              </select>
-            </div>
-            <div class="col-md-3">
-              <input type="number" class="form-control" placeholder="Qty" [(ngModel)]="selectedQuantity" name="selectedQuantity">
-            </div>
-            <div class="col-md-2">
-              <button class="btn btn-primary w-100" (click)="addItem()" [disabled]="!selectedProductId">Add</button>
-            </div>
+  <section class="orders-table-wrapper glass-card">
+    @if (isLoadingOrders) {
+      <!-- Table Shimmer Loading -->
+      <div class="table-loading-shimmer p-2">
+        <div class="skeleton skeleton-title mb-2" style="width: 250px"></div>
+        @for (item of [1,2,3,4,5]; track $index) {
+          <div class="d-flex gap-md mb-1 align-items-center">
+            <div class="skeleton skeleton-avatar"></div>
+            <div class="skeleton skeleton-text" style="width: 20%"></div>
+            <div class="skeleton skeleton-text" style="width: 30%"></div>
+            <div class="skeleton skeleton-text" style="width: 15%"></div>
+            <div class="skeleton skeleton-btn" style="width: 15%; margin-left: auto;"></div>
           </div>
+        }
+      </div>
+    } @else {
+      @if (orders.length === 0) {
+        <div class="empty-state">
+          <i class="bi bi-journal-x"></i>
+          <h3>No Orders Recorded</h3>
+          <p>No transactions have been submitted yet. Click "Draft New Order" to get started.</p>
         </div>
-
-        <!-- Items Table -->
-        <div class="card bg-light border-0">
-          <div class="card-body p-0">
-            <table class="table table-sm align-middle mb-0">
-              <thead class="small text-muted text-uppercase">
+      } @else {
+        <div style="overflow-x: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="text-mono">Transaction ID</th>
+                <th>Customer Name</th>
+                <th>Settlement Timestamp</th>
+                <th class="text-right">Total Settled</th>
+                <th class="text-right">Receipts</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (o of orders; track o.id) {
                 <tr>
-                  <th class="ps-3">Product</th>
-                  <th class="text-center">Qty</th>
-                  <th class="text-end pe-3">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of newOrder.items; let i = index">
-                  <td class="ps-3">{{ getProductName(item.productId) }}</td>
-                  <td class="text-center">{{ item.quantity }}</td>
-                  <td class="text-end pe-3">
-                    <button class="btn btn-link text-danger p-0" (click)="removeItem(i)">
-                      <i class="bi bi-x-circle"></i>
+                  <td class="text-mono fw-700 text-accent">#{{ o.id }}</td>
+                  <td class="fw-600">{{ o.customerName || 'Standard Client' }}</td>
+                  <td class="text-sm text-secondary">{{ o.orderDate | date:'MMM d, y, h:mm a' }}</td>
+                  <td class="text-right fw-700 text-mono text-success">
+                    EGP {{ o.totalAmount | number:'1.2-2' }}
+                  </td>
+                  <td class="text-right">
+                    <button class="btn-premium btn-ghost btn-download-invoice" 
+                            (click)="downloadInvoice(o.id)"
+                            [disabled]="downloadingInvoiceIds.has(o.id)">
+                      @if (downloadingInvoiceIds.has(o.id)) {
+                        <div class="spinner spinner-sm"></div>
+                      } @else {
+                        <i class="bi bi-file-earmark-pdf"></i>
+                      }
+                      <span>PDF</span>
                     </button>
                   </td>
                 </tr>
-                <tr *ngIf="newOrder.items.length === 0">
-                  <td colspan="3" class="text-center py-3 text-muted small">No items added yet.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+              }
+            </tbody>
+          </table>
         </div>
-      </div>
-      <div class="modal-footer border-0 pt-0">
-        <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary px-5" 
-                [disabled]="!newOrder.customerId || newOrder.items.length === 0" 
-                (click)="createOrder()" data-bs-dismiss="modal">
-          Submit Order
+      }
+    }
+  </section>
+</div>
+
+<!-- Custom Glass Modal for Order Draft creation -->
+@if (isModalOpen) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-panel" (click)="$event.stopPropagation()">
+      <header class="modal-header">
+        <h3 class="text-mono">Draft New Order</h3>
+        <button class="btn-icon" (click)="closeModal()" aria-label="Close modal">
+          <i class="bi bi-x-lg"></i>
         </button>
+      </header>
+
+      <div class="modal-body">
+        <form autocomplete="off">
+          <!-- Step 1: Select Customer -->
+          <div class="form-group">
+            <label class="form-label">1. Client / Customer</label>
+            <select class="select-premium" [(ngModel)]="newOrder.customerId" name="customerId" [disabled]="isSubmittingOrder">
+              <option [value]="0" disabled>Choose billing account...</option>
+              @for (c of customers; track c.id) {
+                <option [value]="c.id">{{ c.name }} (ID: {{ c.id }})</option>
+              }
+            </select>
+          </div>
+
+          <!-- Step 2: Add Products -->
+          <div class="form-group mb-2">
+            <label class="form-label">2. Add Item to Cart</label>
+            <div class="add-item-row">
+              <select class="select-premium flex-1" [(ngModel)]="selectedProductId" name="selectedProductId" [disabled]="isSubmittingOrder">
+                <option [value]="0" disabled>Select SKU...</option>
+                @for (p of products; track p.id) {
+                  <option [value]="p.id" [disabled]="p.stock <= 0">
+                    {{ p.name }} — EGP {{ p.price }} (Qty: {{ p.stock }})
+                  </option>
+                }
+              </select>
+              
+              <input type="number" class="input-premium qty-input text-mono" 
+                     placeholder="Qty" [(ngModel)]="selectedQuantity" name="selectedQuantity" 
+                     min="1" [disabled]="isSubmittingOrder">
+              
+              <button type="button" class="btn-premium btn-primary-v2" (click)="addItem()" 
+                      [disabled]="!selectedProductId || selectedQuantity <= 0 || isSubmittingOrder">
+                <i class="bi bi-plus-lg"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Cart Items Checklist -->
+          <div class="form-group">
+            <label class="form-label">Cart Draft Items</label>
+            <div class="cart-items-box glass-card">
+              @if (newOrder.items.length === 0) {
+                <div class="cart-empty-text text-muted text-center text-xs">
+                  Your cart is empty. Add a product to populate the ledger.
+                </div>
+              } @else {
+                <div class="cart-table-wrapper">
+                  <table class="cart-table">
+                    <thead>
+                      <tr>
+                        <th>Sku Product</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-right">Price</th>
+                        <th class="text-center"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (item of newOrder.items; track item.productId; let idx = $index) {
+                        <tr>
+                          <td class="fw-600">{{ getProductName(item.productId) }}</td>
+                          <td class="text-center text-mono">{{ item.quantity }}</td>
+                          <td class="text-right text-mono">
+                            EGP {{ (getProductPrice(item.productId) * item.quantity) | number:'1.2-2' }}
+                          </td>
+                          <td class="text-center">
+                            <button type="button" class="btn-icon btn-remove" (click)="removeItem(idx)" [disabled]="isSubmittingOrder">
+                              <i class="bi bi-trash-fill text-danger text-sm"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Run Rate Total -->
+                <div class="cart-total-row">
+                  <span class="text-secondary text-sm">Running Total:</span>
+                  <span class="text-mono text-accent fw-700">
+                    EGP {{ getOrderTotalDraft() | number:'1.2-2' }}
+                  </span>
+                </div>
+              }
+            </div>
+          </div>
+        </form>
       </div>
+
+      <footer class="modal-footer">
+        <button type="button" class="btn-premium btn-ghost" (click)="closeModal()" [disabled]="isSubmittingOrder">
+          <span>Cancel</span>
+        </button>
+        <button type="button" class="btn-premium btn-primary-v2" 
+                [disabled]="!newOrder.customerId || newOrder.items.length === 0 || isSubmittingOrder" 
+                (click)="createOrder()">
+          @if (isSubmittingOrder) {
+            <div class="spinner spinner-sm"></div>
+            <span>Persisting order...</span>
+          } @else {
+            <i class="bi bi-shield-check"></i>
+            <span>Commit Transaction</span>
+          }
+        </button>
+      </footer>
     </div>
   </div>
-</div>
+}

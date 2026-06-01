@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { Login } from './component/login/login';
-import { Register } from './component/register/register';
+import { Login } from './components/login/login';
+import { Register } from './components/register/register';
 import { Home } from './components/home/home';
 import { Customers } from './components/customers/customers';
 import { Orders } from './components/orders/orders';

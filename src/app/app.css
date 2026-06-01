@@ -1,7 +1,4 @@
-.content-wrapper {
-  margin-right: 90px;
-  min-height: 100vh;
-  transition: margin-right 0.3s ease;
+/* App root — no additional styles needed; layout handled by styles.css */
+.content-area.no-sidebar {
+  margin-left: 0 !important;
 }
-
-/* When sidebar expands, we might want more margin, but for now 90px is safe for the floating bar */
